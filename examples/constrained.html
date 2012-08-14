@@ -50,6 +50,7 @@ function MaskCloud() {
       cloud,
       me = this,
       canvas = null,
+      svg,
       maxForParams = 0.0,
       bestArrangementSoFar = null,
       attempts = 0;
@@ -67,6 +68,13 @@ function MaskCloud() {
     parent = x;
     return this;
   };
+
+  this.svg = function (x) {
+    if (!arguments.length) return svg;
+    svg = x;
+    return this;
+  };
+
 
   this.words = function (x) {
     if (!arguments.length) return words;
@@ -88,7 +96,7 @@ function MaskCloud() {
       .spiral("rectangular")
       .on("end", draw);
 
-    svgToPixelArray(testPath, cloudW, cloudH, function (pixels32) {
+    svgToPixelArray(me.svg(), cloudW, cloudH, function (pixels32) {
       me.canvas = drawPixelArray(pixels32, cloudW, cloudH);
       cloud.mask(pixels32)
         .randomPosition(function () {
@@ -196,7 +204,7 @@ var cloudW = 960,
     cloudH = 540;
 
 var cloud = new MaskCloud();
-cloud.size([cloudW,cloudH]).words([
+cloud.svg(testPath).size([cloudW,cloudH]).words([
         "Hello", "world", "normally", "you", "want", "more", "words",
         "than", "this"].map(function(d) {
         return {text: d, size: 10 + Math.random() * 10};
