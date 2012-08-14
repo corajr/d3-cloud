@@ -13,11 +13,32 @@
         timeInterval = Infinity,
         event = d3.dispatch("word", "end"),
         timer = null,
+        board,
+        maskArray,
+        startingPlace,
         cloud = {};
 
+    startingPlace = function () {
+      return [(size[0] * (Math.random() + .5)) >> 1, (size[1] * (Math.random() + .5)) >> 1];
+    };
+ 
+    cloud.mask = function (array) {
+      if (!arguments.length) return board;
+      maskArray = array;
+      return cloud;
+    };
+
+    cloud.randomPosition = function (func) {
+      if (!arguments.length) return startingPlace;
+      startingPlace = func;
+      return cloud;
+    };
+
     cloud.start = function() {
-      var board = zeroArray((size[0] >> 5) * size[1]),
-          bounds = null,
+      if (maskArray) board = maskArray;
+      else board = zeroArray((size[0] >> 5) * size[1]);
+
+      var bounds = null,
           n = words.length,
           i = -1,
           tags = [],
@@ -42,8 +63,8 @@
             d;
         while (+new Date - start < timeInterval && ++i < n && timer) {
           d = data[i];
-          d.x = (size[0] * (Math.random() + .5)) >> 1;
-          d.y = (size[1] * (Math.random() + .5)) >> 1;
+          d.x = startingPlace()[0];
+          d.y = startingPlace()[1];
           cloudSprite(d, data, i);
           if (place(board, d, bounds)) {
             tags.push(d);
